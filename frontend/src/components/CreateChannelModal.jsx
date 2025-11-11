@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { useChatContext } from "stream-chat-react";
-import * as Sentry from "@sentry/react";
 import toast from "react-hot-toast";
 import { AlertCircleIcon, HashIcon, LockIcon, UsersIcon, XIcon } from "lucide-react";
 
@@ -36,14 +35,9 @@ const CreateChannelModal = ({ onClose }) => {
         setUsers(usersOnly || []);
       } catch (error) {
         console.log("Error fetching users");
-        Sentry.captureException(error, {
-          tags: { component: "CreateChannelModal" },
-          extra: { context: "fetch_users_for_channel" },
-        });
         setUsers([]);
-      } finally {
-        setLoadingUsers(false);
       }
+      setLoadingUsers(false);
     };
 
     fetchUsers();
@@ -125,6 +119,7 @@ const CreateChannelModal = ({ onClose }) => {
 
       const channel = client.channel("messaging", channelId, channelData);
 
+      await channel.create();
       await channel.watch();
 
       setActiveChannel(channel);
