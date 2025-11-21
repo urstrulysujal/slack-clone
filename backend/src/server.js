@@ -19,8 +19,10 @@ app.get("/debug-sentry", (req, res) => {
   throw new Error("My first Sentry error!");
 });
 
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 app.get("/", (req, res) => {
-  res.send("Hello World! 123");
+  res.status(200).json({ message: "Backend is running!", env: ENV.NODE_ENV });
 });
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
